@@ -10,6 +10,7 @@
 <%!
 	String userName = "";
 	String password = "";
+	boolean pref = false;
 	String correctUserName = "class2022";
 	String correctPassword = "123456";
 %>
@@ -26,6 +27,8 @@
 				Cookie user = new Cookie("userName", userName);
 				Cookie pass = new Cookie("password", password);
 				Cookie save = new Cookie("save", "true");
+				
+				pref = true;
 				
 				user.setMaxAge(60*60);
 				user.setPath("/JEEx7");
@@ -72,6 +75,23 @@
 		} else {
 			errors.add("Attempt Failed");
 		}
+		
+		if (request.getCookies() != null) {
+			Cookie[] cookies = request.getCookies();
+			
+			for (Cookie c: cookies) {
+				if (c.getName().equals("userName")) {
+					userName = c.getValue();
+				}
+				if (c.getName().equals("password")) {
+					password = c.getValue();
+				}
+				if (c.getName().equals("save")) {
+					pref = Boolean.parseBoolean(c.getValue());
+				}
+			}
+		}
+		
 	}
 %>
 <!DOCTYPE html>
@@ -96,7 +116,7 @@
                                     <td class="width-300">
                                         <input name="txtUserName" 
                                                class="width-300" 
-                                               value=''/>
+                                               value='<%= userName%>'/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -105,13 +125,13 @@
                                         <input type="password"
                                                name="txtPassword" 
                                                class="width-300" 
-                                               value=''/>
+                                               value='<%= password%>'/>
                                     </td>
                                 </tr>                                
                                 <tr>
                                     <td><input type="checkbox" name="chkSave" 
-                                               
-                                               value=''/>Save</td>
+                                               <%if (pref) {%> checked <%} %>
+                                               value='<%=pref%>'/>Save</td>
                                     <td>                                        
                                         <input 
                                             type="submit" 
