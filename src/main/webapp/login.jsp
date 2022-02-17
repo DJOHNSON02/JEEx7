@@ -7,6 +7,73 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@include file="WEB-INF/jspf/declarativemethods.jspf" %>
 
+<%!
+	String userName = "";
+	String password = "";
+	String correctUserName = "class2022";
+	String correctPassword = "123456";
+%>
+
+<%
+	errors = new ArrayList<String>();
+
+	if (request.getParameter("btnLogin") != null) {
+		userName = checkRequiredField(request.getParameter("txtUserName"), "User Name");
+		password = checkRequiredField(request.getParameter("txtPassword"), "Password");
+		
+		if (password.equals(correctPassword) && userName.equals(correctUserName)) {
+			if (request.getParameter("chkSave") != null) {
+				Cookie user = new Cookie("userName", userName);
+				Cookie pass = new Cookie("password", password);
+				Cookie save = new Cookie("save", "true");
+				
+				user.setMaxAge(60*60);
+				user.setPath("/JEEx7");
+				response.addCookie(user);
+				
+				pass.setMaxAge(60*60);
+				pass.setPath("/JEEx7");
+				response.addCookie(pass);
+				
+				save.setMaxAge(60*60);
+				save.setPath("/JEEx7");
+				response.addCookie(save);
+			} else {
+				if (request.getCookies() != null) {
+					Cookie[] cookies = request.getCookies();
+					
+					for (Cookie c: cookies) {
+						if (c.getName().equals("userName")) {
+							//Clears the cookie 
+							c.setMaxAge(0);
+							c.setPath("/JEEx7");
+						}
+						
+						if (c.getName().equals("password")) {
+							//Clears the cookie 
+							c.setMaxAge(0);
+							c.setPath("/JEEx7");
+						}
+						
+						if (c.getName().equals("save")) {
+							//Clears the cookie 
+							c.setMaxAge(0);
+							c.setPath("/JEEx7");
+						}
+						response.addCookie(c);
+					}
+				}
+			}
+			session.setAttribute("authenticatedUser", userName);
+			session.setAttribute("authenticated", password);
+			session.setmaxInactiveInterval(60);
+			
+			response.sendRedirect("index.jsp");
+		} else {
+			errors.add("Attempt Failed");
+		}
+	}
+%>
 <!DOCTYPE html>
 <html>
     <head>
